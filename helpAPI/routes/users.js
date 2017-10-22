@@ -54,4 +54,20 @@ router.get('/delete/:id', function(req, res, next) {
   });
 });
 
+router.get('/modrol/:id/:rol', function(req, res, next) {
+  var id = req.params.id;
+  var rol = req.params.rol;
+  user.query("UPDATE usuarios SET US_Rol="+rol+" WHERE US_ID="+id+";", function(err, callback){ 
+     if(callback!=null){
+      res.json({modification:"Correcta"});
+      console.log(callback);
+    }
+    else{
+      res.json({modification:"Incorrecta"});
+      console.log(callback);
+    }
+
+  });
+});
+
 module.exports = router;
