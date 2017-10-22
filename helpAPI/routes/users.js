@@ -35,7 +35,16 @@ router.get('/login/:mail/:pwd', function(req, res, next) {
 		}
 		//Credenciales correctas
 		else if (rows[0].US_Pass == pwd){
-			res.json({code:3, msg:'Las credenciales son correctas'});
+			res.json({
+				code:3, 
+				msg:'Las credenciales son correctas',
+				user : { 
+					name: rows[0].US_Nombre,
+					mail: rows[0].US_Correo,
+					rol : rows[0].US_Rol,
+					dep : rows[0].US_Dependencia
+				}
+			});
 		}
       }
   });
