@@ -24,19 +24,19 @@ router.get('/login/:mail/:pwd', function(req, res, next) {
     user.query("SELECT * FROM usuarios WHERE US_Correo='"+mail+"';", function(err, rows){
       //Correo no registrado
       if(rows==""){
-        res.json({code:"1", msg:'El correo introducido no ha sido registrado'});
+        res.json({code:1, msg:'El correo introducido no está registrado'});
       }
 
       //Correo registrado
       else{
-      	console.log(rows);
-      	res.json({login:"correcto"});
-      	
-      	//Y contrasenia incorrecta
-        
-
-        //Y contrasenia correcta
-        
+      	//Contrasenia incorrecta
+		if(rows[0].US_Pass != pwd){
+			res.json({code:2, msg:'La contraseña es incorrecta'});
+		}
+		//Credenciales correctas
+		else if (rows[0].US_Pass == pwd){
+			res.json({code:3, msg:'Las credenciales son correctas'});
+		}
       }
   });
 });
