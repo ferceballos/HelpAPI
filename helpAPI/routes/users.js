@@ -7,7 +7,7 @@ var MyAppModel = mysqlModel.createConnection({
     host     : 'localhost',
     user     : 'root',
     password : '',
-    database : 'pi-7mo',
+    database : 'pi7',
   });
    
   var User = MyAppModel.extend({
@@ -20,14 +20,23 @@ var MyAppModel = mysqlModel.createConnection({
 router.get('/login/:mail/:pwd', function(req, res, next) {
   var mail = req.params.mail;
   var pwd = req.params.pwd;
-  //Aqui es donde estoy haciendo las pruebas a ver si agarro algo
-  user.query("SELECT US_Nombre FROM usuarios WHERE US_Correo='"+mail+"' and US_Pass='"+pwd+"';", function(err, rows){
+  //Primero que nada, verificar si el correo está registrado en la base de datos
+    user.query("SELECT * FROM usuarios WHERE US_Correo='"+mail+"';", function(err, rows){
+      //Correo no registrado
       if(rows==""){
-        res.json({login:"incorrecto"});
+        res.json({code:"1", msg:'El correo introducido no ha sido registrado'});
       }
+
+      //Correo registrado
       else{
-        res.json({login:"correcto"});
-        console.log(rows);
+      	console.log(rows);
+      	res.json({login:"correcto"});
+      	
+      	//Y contrasenia incorrecta
+        
+
+        //Y contrasenia correcta
+        
       }
   });
 });
@@ -36,21 +45,33 @@ router.get('/signup/:name/:mail/:pwd/:rol/:dep', function(req, res, next) {
   var name = req.params.name;
   var mail = req.params.mail;
   var pwd = req.params.pwd;
-  var rol = req.params.rol;
-  var dep =req.params.dep;
-  user.query("INSERT into usuarios (US_Nombre,US_Correo,US_Pass,US_Rol,US_Dependencia) VALUES ('"+name+"','"+mail+"','"+pwd+"',"+rol+","+dep+");", function(err, callback){
-    if(callback!=null) 
-      res.json({signup:"Registro Correcto"});
-    else
-      res.json({signup:"Registro Incorrecto"});
+  var rol = parseInt(req.params.rol);
+  var dep =parseInt(req.params.dep);
+
+  user = new User({
+  	US_Nombre: name,
+    US_Correo: mail,
+    US_Pass: pwd,
+    US_Rol: rol,
+    US_Dependencia: dep
+  });
+
+  user.save(function(err, callback){
+     if(callback!=null) 
+       res.json({code:1, msg:"Usuario registrado con éxito"});
+     else
+       res.json({code:2, msg:"Ha ocurrido un problema con el registro, inténtelo de nuevo"});
   });
 });
 
 router.get('/delete/:id', function(req, res, next) {
   var id = req.params.id;
+
   user.query("DELETE FROM usuarios WHERE US_ID='"+id+"';", function(err, callback){ 
-      res.json({delete:"Correcto"});
-      console.log(callback);
+    	if(callback!=null) 
+        	res.json({code:1, msg:'Removido con exito'});
+        else
+        	res.json({code:2, msg:'Ha ocurrido un problema al borrar'})
   });
 });
 
@@ -59,14 +80,13 @@ router.get('/modrol/:id/:rol', function(req, res, next) {
   var rol = req.params.rol;
   user.query("UPDATE usuarios SET US_Rol="+rol+" WHERE US_ID="+id+";", function(err, callback){ 
      if(callback!=null){
-      res.json({modification:"Correcta"});
+      res.json({code:1, msg:'El rol ha sido modificado'});
       console.log(callback);
     }
     else{
-      res.json({modification:"Incorrecta"});
+      res.json({code:2, msg:'Ha ocurrido un error al tratar de hacer la modificacion'});
       console.log(callback);
     }
-
   });
 });
 
