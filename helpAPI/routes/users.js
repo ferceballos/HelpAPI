@@ -20,18 +20,15 @@ var MyAppModel = mysqlModel.createConnection({
 router.get('/login/:mail/:pwd', function(req, res, next) {
   var mail = req.params.mail;
   var pwd = req.params.pwd;
+  var respuesta; 
 
   //Aqui es donde estoy haciendo las pruebas a ver si agarro algo
-  var usuario = user.find('all',{where: "US_Correo = "+mail});
-  console.log(usuario);
-
-  //user.find('all', {where: "US_Correo = "+mail}, function(err, rows, fields) {
-
-    //var foundPwd = user.read(2);
-    //console.log('Entre a users.find y');
-    //console.log('Encontre que la contrasenia de la BD es: ');
-    //res.json({pwd:foundPwd});
-	//});
+  user.query("SELECT US_Nombre FROM usuarios WHERE US_Correo='"+mail+"' and US_Pass='"+pwd+"';", function(err, rows){
+      if(rows=="")
+      res.send("Datos incorrectos");
+      else
+      res.send(rows);
+  });
 });
 
 
