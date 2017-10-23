@@ -1,5 +1,5 @@
 /* Creacion de la base de datos */
-DROP DATABASE pi7;
+DROP DATABASE IF EXISTS pi7;
 
 CREATE DATABASE  IF NOT EXISTS `pi7`;
 USE `pi7`;
