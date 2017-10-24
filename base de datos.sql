@@ -68,12 +68,16 @@ CREATE TABLE `tickets` (
   `TI_Calificacion` tinyint(5) NOT NULL,
   `TI_Status` int(10) NOT NULL,
   `TI_Usuario_Solicitante` int(10) NOT NULL,
+  `TI_Usuario_Bibliotecario` int(10),
   PRIMARY KEY (`TI_Folio`),
   KEY `fk_ticket_status` (`TI_Status`),
   KEY `fk_ticket_usuario` (`TI_Usuario_Solicitante`),
+  KEY `fk_ticket_bibliotecario` (`TI_Usuario_Bibliotecario`),
 
   CONSTRAINT `fk_ticket_status` FOREIGN KEY (`TI_Status`) REFERENCES `status` (`ST_ID`),
-  CONSTRAINT `fk_ticket_usuario` FOREIGN KEY (`TI_Usuario_Solicitante`) REFERENCES `usuarios` (`US_ID`)
+  CONSTRAINT `fk_ticket_usuario` FOREIGN KEY (`TI_Usuario_Solicitante`) REFERENCES `usuarios` (`US_ID`),
+  CONSTRAINT `fk_ticket_bibliotecario` FOREIGN KEY (`TI_Usuario_Bibliotecario`) REFERENCES `usuarios` (`US_ID`)
+
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 LOCK TABLES `tickets` WRITE;
@@ -82,28 +86,24 @@ UNLOCK TABLES;
 LOCK TABLES `usuarios` WRITE;
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `usuarios_tickets`;
-CREATE TABLE `usuarios_tickets` (
+DROP TABLE IF EXISTS `logs`;
+CREATE TABLE `logs` (
   `UT_ID` int(10) NOT NULL AUTO_INCREMENT,
   `UT_Fecha_Hora_Movimiento` datetime NOT NULL,
   `UT_Comentario` text NOT NULL,
   `UT_Status` int(10) NOT NULL,  
   `UT_Etiqueta` int(10) NOT NULL,
-  `UT_Usuario` int(10) NOT NULL,
   `UT_Ticket` int(10) NOT NULL,
   PRIMARY KEY (`UT_ID`),
   KEY `fk_movimientos_Status` (`UT_Status`),
   KEY `fk_movimientos_Etiqueta` (`UT_Etiqueta`),
-  KEY `fk_movimientos_Usuario` (`UT_Usuario`),
   KEY `fk_movimientos_Ticket` (`UT_Ticket`),
-
   CONSTRAINT `fk_movimientos_Status` FOREIGN KEY (`UT_Status`) REFERENCES `status` (`ST_ID`),
   CONSTRAINT `fk_movimientos_Etiqueta` FOREIGN KEY (`UT_Etiqueta`) REFERENCES `etiquetas` (`ET_ID`),
-  CONSTRAINT `fk_movimientos_Usuario` FOREIGN KEY (`UT_Usuario`) REFERENCES `usuarios` (`US_ID`),
   CONSTRAINT `fk_movimientos_Ticket` FOREIGN KEY (`UT_Ticket`) REFERENCES `tickets` (`TI_Folio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-LOCK TABLES `usuarios_tickets` WRITE;
+LOCK TABLES `logs` WRITE;
 UNLOCK TABLES;
 
 /* Insercion de datos */ 
