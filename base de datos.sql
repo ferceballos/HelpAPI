@@ -64,24 +64,45 @@ CREATE TABLE `tickets` (
   `TI_Folio` int(10) NOT NULL AUTO_INCREMENT,
   `TI_Fecha_Hora_Alta` datetime NOT NULL,
   `TI_Peticion` text NOT NULL,
-  `TI_Fecha_Hora_Cierre` datetime NOT NULL,
-  `TI_Calificacion` tinyint(5) NOT NULL,
+  `TI_Fecha_Hora_Cierre` datetime,
+  `TI_Calificacion` tinyint(5),
   `TI_Status` int(10) NOT NULL,
   `TI_Usuario_Solicitante` int(10) NOT NULL,
   `TI_Usuario_Bibliotecario` int(10),
+  `TI_Biblioteca` int(10),
   PRIMARY KEY (`TI_Folio`),
   KEY `fk_ticket_status` (`TI_Status`),
   KEY `fk_ticket_usuario` (`TI_Usuario_Solicitante`),
   KEY `fk_ticket_bibliotecario` (`TI_Usuario_Bibliotecario`),
+  KEY `fk_ticket_biblioteca` (`TI_Biblioteca`),
 
   CONSTRAINT `fk_ticket_status` FOREIGN KEY (`TI_Status`) REFERENCES `status` (`ST_ID`),
   CONSTRAINT `fk_ticket_usuario` FOREIGN KEY (`TI_Usuario_Solicitante`) REFERENCES `usuarios` (`US_ID`),
-  CONSTRAINT `fk_ticket_bibliotecario` FOREIGN KEY (`TI_Usuario_Bibliotecario`) REFERENCES `usuarios` (`US_ID`)
+  CONSTRAINT `fk_ticket_bibliotecario` FOREIGN KEY (`TI_Usuario_Bibliotecario`) REFERENCES `usuarios` (`US_ID`),
+  CONSTRAINT `fk_ticket_biblioteca` FOREIGN KEY (`TI_Biblioteca`) REFERENCES `dependencias` (`DE_ID`)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
 LOCK TABLES `tickets` WRITE;
 UNLOCK TABLES;
+
+
+DROP TABLE IF EXISTS `mensajes`;
+CREATE TABLE `mensajes` (
+  `me_id` int(10) NOT NULL AUTO_INCREMENT,
+  `me_ticket` int(10) NOT NULL,
+  `me_usuario` int(10) NOT NULL,
+  `me_fecha` datetime NOT NULL,
+  `me_contenido` text NOT NULL,
+  PRIMARY KEY (`me_id`),
+  KEY `fk_me_tickets` (`me_ticket`),
+  KEY `fk_me_usuario` (`me_usuario`),
+  CONSTRAINT `fk_me_tickets` FOREIGN KEY (`me_ticket`) REFERENCES `tickets` (`TI_Folio`),
+  CONSTRAINT `fk_me_usuario` FOREIGN KEY (`me_usuario`) REFERENCES `usuarios` (`US_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 
 LOCK TABLES `usuarios` WRITE;
 UNLOCK TABLES;
@@ -107,6 +128,10 @@ LOCK TABLES `logs` WRITE;
 UNLOCK TABLES;
 
 /* Insercion de datos */ 
+
+
+
+
 
 -- ETIQUETAS
 INSERT INTO etiquetas (ET_Etiqueta)
@@ -161,3 +186,11 @@ VALUES
 ('Biblioteca de Bachillerato 14 '),
 ('Biblioteca del Bachillerato Santiago'),
 ('Biblioteca Comercio y Nutrición');
+
+-- USUARIO
+INSERT INTO usuarios (US_Nombre, US_Correo, US_Pass, US_Rol, US_Dependencia)
+VALUES
+('Fernando Ceballos', 'correo@ucol.mx', '1234','1','1');
+
+
+INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante) VALUES (now(),'send nudes','1','1');

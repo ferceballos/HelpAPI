@@ -13,8 +13,13 @@ var MyAppModel = mysqlModel.createConnection({
   var Ticket = MyAppModel.extend({
       tableName: "tickets",
   });
+
+  var Mensaje = MyAppModel.extend({
+      tableName: "mensajes",
+  });
    
   ticket = new Ticket();
+  mensaje = new Mensaje();
 
 //Direcciones y metodos empiezan aqui
 
@@ -56,5 +61,100 @@ router.get('/getbyopened', function(req, res, next) {
 router.get('/', function(req, res, next) {
   res.send('Here are the tickets methods')
 });
+
+// MI PARTE MADAFACA
+
+
+//Asignar​ ​un​ ​ticket​ ​a​ ​un​ ​bibliotecario
+router.get('/mod/librarian/:idt/idb', function(req, res, next) {
+    var idt = req.params.idt;
+    var idb = req.params.idb;
+
+    //Regresa todo los datos de los tickets que no tienen el status 3 que es cerrado 
+    ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = "+idb+" WHERE TI_Folio='"+idt+"';",function(err, rows){
+      
+      //No sé cómo comprobar si salió bien o no, pero debería de averiguarlo
+      res.json({code:1, msg:'Reporte asignado con éxito'});
+      
+
+    })
+  });
+
+
+//Asignar​ ​un​ ​ticket​ ​a​ ​un​ ​bibliotecario
+router.get('/mod/librarian/:idt/:idb', function(req, res, next) {
+    var idt = req.params.idt;
+    var idb = req.params.idb;
+
+    //Regresa todo los datos de los tickets que no tienen el status 3 que es cerrado 
+    ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = "+idb+" WHERE TI_Folio='"+idt+"';",function(err, rows){
+      
+if(callback!=null) 
+       res.json({code:1, msg:"Bibliotecario asignado con éxito"});
+     else
+       res.json({code:2, msg:"Ha ocurrido un problema al asignar, inténtelo de nuevo"});
+      
+
+    })
+  });
+
+//Crear un ticket
+router.get('/create/:peti/:ids', function(req, res, next) {
+    var peti = req.params.peti;
+    var ids = req.params.ids;
+
+  ticket.query( "INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante) VALUES (now(),'"+peti+"','1','"+ids+"');" ,function(err, callback){
+     if(callback!=null) 
+       res.json({code:1, msg:"Ticket enviado con éxito"});
+     else
+       res.json({code:2, msg:"Ha ocurrido un problema al enviar el ticket, inténtelo de nuevo"});
+  });
+
+});
+
+// Mandar mensaje a un ticket
+router.get('/mod/message/:usr/:idt/:msg', function(req, res, next) {
+    var usr = req.params.usr;
+    var idt = req.params.idt;
+    var msg = req.params.msg;
+
+    mensaje = new Mensaje({
+    me_ticket: idt,
+    me_usuario: pwd,
+    me_fecha: 'NOW();',
+    me_contenido: msg
+  });
+
+  mensaje.save(function(err, callback){
+     if(callback!=null) 
+       res.json({code:1, msg:"Mensaje enviado con éxito"});
+     else
+       res.json({code:2, msg:"Ha ocurrido un problema al enviar el mensaje, inténtelo de nuevo"});
+  });
+
+});
+
+//Modificar​ ​el​ ​estado​ ​de​ ​un​ ​ticket​ ​(Abierto,​ ​en​ ​proceso,​ ​cerrado,​ ​etc) 
+/mod/status/[id​ ​del​ ​ticket]+[estado]  
+
+router.get('/mod/status/:idt/:estado  ', function(req, res, next) {
+    var idt = req.params.idt;
+    var estado = req.params.estado;
+
+  ticket.query( "INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante) VALUES (now(),'"+peti+"','1','"+ids+"');" ,function(err, callback){
+     if(callback!=null) 
+       res.json({code:1, msg:"Ticket enviado con éxito"});
+     else
+       res.json({code:2, msg:"Ha ocurrido un problema al enviar el ticket, inténtelo de nuevo"});
+  });
+
+});
+
+
+router.get('/', function(req, res, next) {
+  res.send('Here are the tickets methods')
+});
+
+
 
 module.exports = router;
