@@ -40,11 +40,18 @@ router.get('/getbyuser/:user', function(req, res, next) {
 router.get('/getbylibrarian/:user', function(req, res, next) {
   var user = req.params.user;
   //Regresa todo los datos del ticket que estan asignados a un bibliotecario 
-  //Todavia no esta terminado y todas las demas todavia faltan de revision 
-  ticket.query("SELECT * FROM tickets, usuarios WHERE TI_Usuario_Solicitante='"+user+"' AND US_Rol=3", function(err, rows){
+  ticket.query("SELECT TI_Folio, TI_Fecha_Hora_Alta, TI_Peticion, TI_Fecha_Hora_Cierre, "+
+  "TI_Calificacion, TI_Status, TI_Usuario_Solicitante FROM tickets, usuarios WHERE TI_Usuario_Solicitante='"+user+"' AND US_Rol=3;", function(err, rows){
     res.send(rows);
   })
 });
+
+//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ ​no​ ​han​ ​sido​ ​cerrados
+router.get('/getbyopened', function(req, res, next) {
+    //Regresa todo los datos de los tickets que no tienen el status 3 que es cerrado 
+    ticket.query("SELECT * FROM tickets WHERE TI_Status=1 OR TI_Status=2;",function(err, rows){
+    })
+  });
 
 router.get('/', function(req, res, next) {
   res.send('Here are the tickets methods')
