@@ -73,33 +73,31 @@ router.get('/', function(req, res, next) {
 
 // MI PARTE MADAFACA
 
-
-//Asignar​ ​un​ ​ticket​ ​a​ ​un​ ​bibliotecario
-router.get('/mod/librarian/:idt/idb', function(req, res, next) {
-    var idt = req.params.idt;
-    var idb = req.params.idb;
-
-    //Regresa todo los datos de los tickets que no tienen el status 3 que es cerrado 
-    ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = "+idb+" WHERE TI_Folio='"+idt+"';",function(err, rows){
-      
-      //No sé cómo comprobar si salió bien o no, pero debería de averiguarlo
-      res.json({code:1, msg:'Reporte asignado con éxito'});
-      
-
-    })
-  });
-
-
 //Asignar​ ​un​ ​ticket​ ​a​ ​un​ ​bibliotecario
 router.get('/mod/librarian/:idt/:idb', function(req, res, next) {
     var idt = req.params.idt;
     var idb = req.params.idb;
 
-    //Regresa todo los datos de los tickets que no tienen el status 3 que es cerrado 
-    ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = "+idb+" WHERE TI_Folio='"+idt+"';",function(err, rows){
+    ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = "+idb+" WHERE TI_Folio='"+idt+"';",function(err, callback){
       
 if(callback!=null) 
        res.json({code:1, msg:"Bibliotecario asignado con éxito"});
+     else
+       res.json({code:2, msg:"Ha ocurrido un problema al asignar, inténtelo de nuevo"});
+      
+
+    })
+  });
+
+//Asignar​ ​un​ ​ticket​ ​a​ una biblioteca
+router.get('/mod/library/:idt/:dep', function(req, res, next) {
+    var idt = req.params.idt;
+    var dep = req.params.dep;
+
+    ticket.query("UPDATE tickets SET TI_Biblioteca = "+dep+" WHERE TI_Folio='"+idt+"';",function(err, callback){
+      
+if(callback!=null) 
+       res.json({code:1, msg:"Biblioteca asignada con éxito"});
      else
        res.json({code:2, msg:"Ha ocurrido un problema al asignar, inténtelo de nuevo"});
       
@@ -144,6 +142,7 @@ router.get('/mod/message/:usr/:idt/:msg', function(req, res, next) {
 });
 
 //Modificar​ ​el​ ​estado​ ​de​ ​un​ ​ticket​ ​(Abierto,​ ​en​ ​proceso,​ ​cerrado,​ ​etc) 
+<<<<<<< HEAD
 //mod/status/[id​ ​del​ ​ticket]+[estado]  
 
 router.get('/mod/status/:idt/:estado  ', function(req, res, next) {
@@ -157,8 +156,40 @@ router.get('/mod/status/:idt/:estado  ', function(req, res, next) {
        res.json({code:2, msg:"Ha ocurrido un problema al enviar el ticket, inténtelo de nuevo"});
   });
 
+=======
+router.get('/mod/status/:idt/:estado', function(req, res, next) {
+    var idt = parseInt(req.params.idt);
+    var estado = parseInt(req.params.estado) ;
+
+    console.log('entre al metodo');
+
+    ticket.query( "UPDATE tickets SET TI_Status = '"+estado+"' WHERE TI_Folio = '"+idt+"';" , function(err, callback){
+       if(callback!=null) {
+         res.json({code:1, msg:"Status cambiado con éxito"});
+       }
+       else{
+         res.json({code:2, msg:"Ha ocurrido un problema al cambiar status, inténtelo de nuevo"});
+       }
+    });
+>>>>>>> b5f38d4664ae9fc4b484448e49bc4303c34f18ab
 });
 
+//Calificar un ticket
+router.get('/mod/rate/:idt/:stars', function(req, res, next) {
+    var idt = parseInt(req.params.idt);
+    var estado = parseInt(req.params.estado) ;
+
+    console.log('entre al metodo');
+
+    ticket.query( "UPDATE tickets SET TI_Status = '"+estado+"' WHERE TI_Folio = '"+idt+"';" , function(err, callback){
+       if(callback!=null) {
+         res.json({code:1, msg:"Status cambiado con éxito"});
+       }
+       else{
+         res.json({code:2, msg:"Ha ocurrido un problema al cambiar status, inténtelo de nuevo"});
+       }
+    });
+});
 
 router.get('/', function(req, res, next) {
   res.send('Here are the tickets methods')
