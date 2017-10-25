@@ -108,8 +108,6 @@ router.get('/', function(req, res, next) {
   res.send('Here are the tickets methods')
 });
 
-// MI PARTE MADAFACA
-
 //Asignar​ ​un​ ​ticket​ ​a​ ​un​ ​bibliotecario
 router.get('/mod/librarian/:idt/:idb', function(req, res, next) {
     var idt = req.params.idt;
@@ -117,9 +115,9 @@ router.get('/mod/librarian/:idt/:idb', function(req, res, next) {
 
     ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = "+idb+" WHERE TI_Folio='"+idt+"';",function(err, callback){
       
-if(callback!=null) 
+    if(callback!=null) 
        res.json({code:1, msg:"Bibliotecario asignado con éxito"});
-     else
+    else
        res.json({code:2, msg:"Ha ocurrido un problema al asignar, inténtelo de nuevo"});
       
 

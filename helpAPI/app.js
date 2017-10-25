@@ -22,6 +22,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(req, res, next) {
+  var allowedOrigins = ['http://localhost:8100', 'http://localhost:8020'];
+  var origin = req.headers.origin;
+  if(allowedOrigins.indexOf(origin) > -1){
+       res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  //res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:8020');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', true);
+  return next();
+});
+
 
 app.use('/', index);
 app.use('/users', users);

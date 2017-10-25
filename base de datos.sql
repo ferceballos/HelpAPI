@@ -194,3 +194,5 @@ VALUES
 
 
 INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante) VALUES (now(),'send nudes','1','1');
+INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Biblioteca) VALUES (now(),'holy macarroni','1','1','10');
+INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Biblioteca) VALUES (now(),'mientras tenga hoyo aunque sea de pollo','1','1','10');
