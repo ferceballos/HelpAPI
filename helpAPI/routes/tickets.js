@@ -59,6 +59,43 @@ router.get('/getbylibrarian/:id', function(req, res, next) {
   })
 });
 
+//Obtener todos los tickets asignados a una biblioteca
+router.get('/getbylibrary/:dep', function(req, res, next) {
+  var dep = req.params.dep;
+  console.log("El id de la dependencia es " + dep);
+  
+
+  ticket.query("SELECT * FROM `tickets` WHERE `TI_Biblioteca`="+dep+";", function(err, rows){
+
+    if(rows=="") {
+        res.json({code:2, msg:"Ha ocurrido un problema al cambiar status, inténtelo de nuevo"});
+    }
+
+    else{
+      var tickets = {
+        ticketito: []
+    };
+    
+    for(var i = 0; i<rows.length; i++) {    
+        tickets.ticketito.push({ 
+          id: rows[i].TI_Folio,
+          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+          peticion : rows[i].TI_Peticion,
+          fechaCierre : rows[i].TI_Fecha_Hora_Cierre,
+          rate : rows[i].TI_Calificacion,
+          status : rows[i].TI_Status,
+          solicitante : rows[i].TI_Usuario_Solicitante,
+          bibliotecario : rows[i].TI_Usuario_Bibliotecario,
+          biblioteca : rows[i].TI_Biblioteca
+        });
+    }
+
+      res.send(tickets);
+
+    }
+  })
+});
+
 //Obtener​ ​todos​ ​los​ ​tickets​ ​que​ ​no​ ​han​ ​sido​ ​cerrados
 router.get('/getbyopened', function(req, res, next) {
     //Regresa todos los datos de los tickets diferente a 3=cerrado 
@@ -142,21 +179,6 @@ router.get('/mod/message/:usr/:idt/:msg', function(req, res, next) {
 });
 
 //Modificar​ ​el​ ​estado​ ​de​ ​un​ ​ticket​ ​(Abierto,​ ​en​ ​proceso,​ ​cerrado,​ ​etc) 
-<<<<<<< HEAD
-//mod/status/[id​ ​del​ ​ticket]+[estado]  
-
-router.get('/mod/status/:idt/:estado  ', function(req, res, next) {
-    var idt = req.params.idt;
-    var estado = req.params.estado;
-
-  ticket.query( "INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante) VALUES (now(),'"+peti+"','1','"+ids+"');" ,function(err, callback){
-     if(callback!=null) 
-       res.json({code:1, msg:"Ticket enviado con éxito"});
-     else
-       res.json({code:2, msg:"Ha ocurrido un problema al enviar el ticket, inténtelo de nuevo"});
-  });
-
-=======
 router.get('/mod/status/:idt/:estado', function(req, res, next) {
     var idt = parseInt(req.params.idt);
     var estado = parseInt(req.params.estado) ;
@@ -171,7 +193,6 @@ router.get('/mod/status/:idt/:estado', function(req, res, next) {
          res.json({code:2, msg:"Ha ocurrido un problema al cambiar status, inténtelo de nuevo"});
        }
     });
->>>>>>> b5f38d4664ae9fc4b484448e49bc4303c34f18ab
 });
 
 //Calificar un ticket
