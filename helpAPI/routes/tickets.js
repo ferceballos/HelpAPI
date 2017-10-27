@@ -28,8 +28,28 @@ router.get('/getbyfolio/:folio', function(req, res, next) {
   var folio = req.params.folio;
   //Regresa todos los datos del ticket con el folio solicitado 
   ticket.find('all',{where:"TI_Folio="+folio+""}, function(err, rows){
-    if(rows!='')
-    res.json({code:1, msg:rows});
+    if(rows!=''){
+      var tickets = {
+        ticketito: []
+    };
+    
+    for(var i = 0; i<rows.length; i++) {    
+        tickets.ticketito.push({ 
+          folio: rows[i].TI_Folio,
+          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+          peticion : rows[i].TI_Peticion,
+          fechaCierre : rows[i].TI_Fecha_Hora_Cierre,
+          rate : rows[i].TI_Calificacion,
+          status : rows[i].TI_Status,
+          solicitante : rows[i].TI_Usuario_Solicitante,
+          bibliotecario : rows[i].TI_Usuario_Bibliotecario,
+          biblioteca : rows[i].TI_Biblioteca
+        });
+    }
+
+      res.send(tickets);
+
+    }
     else
     res.json({code:2, msg:'Folio no existente'});
   })
@@ -40,8 +60,28 @@ router.get('/getbyuser/:user', function(req, res, next) {
   var user = req.params.user;
   //Regresa todos los datos de todos los tickets que tenga un usuario 
   ticket.find('all',{where:"TI_Usuario_Solicitante='"+user+"'"}, function(err, rows){
-    if(rows!='')
-    res.json({code:1, msg:rows});
+    if(rows!=''){
+      var tickets = {
+        ticketito: []
+    };
+    
+    for(var i = 0; i<rows.length; i++) {    
+        tickets.ticketito.push({ 
+          folio: rows[i].TI_Folio,
+          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+          peticion : rows[i].TI_Peticion,
+          fechaCierre : rows[i].TI_Fecha_Hora_Cierre,
+          rate : rows[i].TI_Calificacion,
+          status : rows[i].TI_Status,
+          solicitante : rows[i].TI_Usuario_Solicitante,
+          bibliotecario : rows[i].TI_Usuario_Bibliotecario,
+          biblioteca : rows[i].TI_Biblioteca
+        });
+    }
+
+      res.send(tickets);
+
+    }
     else
     res.json({code:2, msg:'Usuario sin tickets o Usuario inexistente'});
   })
@@ -52,8 +92,28 @@ router.get('/getbylibrarian/:id', function(req, res, next) {
   var id = req.params.id;
   //Regresa todo los datos del ticket que estan asignados a un bibliotecario 
   ticket.find('TI_Folio, TI_Fecha_Hora_Alta, TI_Peticion, TI_Fecha_Hora_Cierre, TI_Calificacion, TI_Status, TI_Usuario_Solicitante', {where:"TI_Usuario_Bibliotecario="+id+""}, function(err, rows){
-    if(rows!='')
-    res.json({code:1, msg:rows});
+    if(rows!=''){
+      var tickets = {
+        ticketito: []
+    };
+    
+    for(var i = 0; i<rows.length; i++) {    
+        tickets.ticketito.push({ 
+          folio: rows[i].TI_Folio,
+          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+          peticion : rows[i].TI_Peticion,
+          fechaCierre : rows[i].TI_Fecha_Hora_Cierre,
+          rate : rows[i].TI_Calificacion,
+          status : rows[i].TI_Status,
+          solicitante : rows[i].TI_Usuario_Solicitante,
+          bibliotecario : rows[i].TI_Usuario_Bibliotecario,
+          biblioteca : rows[i].TI_Biblioteca
+        });
+    }
+
+      res.send(tickets);
+
+    }
     else
     res.json({code:2, msg:'Bibliotecario sin tickes o Bibliotecario inexistente'});
   })
@@ -100,7 +160,28 @@ router.get('/getbylibrary/:dep', function(req, res, next) {
 router.get('/getbyopened', function(req, res, next) {
     //Regresa todos los datos de los tickets diferente a 3=cerrado 
     ticket.find('all',{where:"TI_Status<>3"}, function(err, rows){
-      res.json({code:1, msg:rows});
+      {
+        var tickets = {
+          ticketito: []
+      };
+      
+      for(var i = 0; i<rows.length; i++) {    
+          tickets.ticketito.push({ 
+            folio: rows[i].TI_Folio,
+            fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+            peticion : rows[i].TI_Peticion,
+            fechaCierre : rows[i].TI_Fecha_Hora_Cierre,
+            rate : rows[i].TI_Calificacion,
+            status : rows[i].TI_Status,
+            solicitante : rows[i].TI_Usuario_Solicitante,
+            bibliotecario : rows[i].TI_Usuario_Bibliotecario,
+            biblioteca : rows[i].TI_Biblioteca
+          });
+      }
+  
+        res.send(tickets);
+  
+      }
     })
   });
 

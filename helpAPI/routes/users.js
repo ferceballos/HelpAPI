@@ -90,7 +90,6 @@ router.get('/modrol/:id/:rol', function(req, res, next) {
   user.query("UPDATE usuarios SET US_Rol="+rol+" WHERE US_ID="+id+";", function(err, callback){ 
      if(callback!=null){
       res.json({code:1, msg:'El rol ha sido modificado'});
-      console.log(callback);
     }
     else{
       res.json({code:2, msg:'Ha ocurrido un error al tratar de hacer la modificacion'});
