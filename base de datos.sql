@@ -202,13 +202,19 @@ INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicit
 INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Biblioteca) VALUES (now(),'mientras tenga hoyo aunque sea de pollo','1','1','10');
 
 -- Ceballos mandando un mensaje al ticket 1
-INSERT INTO tickets (me_ticket,me_usuario,me_fecha,me_contenido) 
-VALUES (1,1,now(),'qué pedo compa, ya me van a atender o queso babas');
+INSERT INTO mensajes (me_ticket,me_usuario,me_fecha,me_contenido) 
+VALUES ('1','1',now(),'qué pedo compa, ya me van a atender o queso babas');
 
 -- Bibliotecario mandando otro mensaje al ticket 1
-INSERT INTO tickets (me_ticket,me_usuario,me_fecha,me_contenido) 
-VALUES (1,2,now(),'en eso ando, aguanta bara');
+INSERT INTO mensajes (me_ticket,me_usuario,me_fecha,me_contenido) 
+VALUES ('1','4',now(),'en eso ando, aguanta bara');
 
 -- Bibliotecario mandando otro mensaje más al ticket 1
-INSERT INTO tickets (me_ticket,me_usuario,me_fecha,me_contenido) 
-VALUES (1,2,now(),'¿qué chingados querías?');
+INSERT INTO mensajes (me_ticket,me_usuario,me_fecha,me_contenido) 
+VALUES ('1','4',now(),'¿qué chingados querías?');
+
+-- Ceballos mandando un mensaje al ticket 1
+INSERT INTO mensajes (me_ticket,me_usuario,me_fecha,me_contenido) 
+VALUES ('1','1',now(),'Ya nada we, chingas atumadre');
+
+SELECT * FROM mensajes WHERE me_ticket = 1 ORDER BY me_fecha ASC
