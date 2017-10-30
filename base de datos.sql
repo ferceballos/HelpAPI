@@ -187,12 +187,28 @@ VALUES
 ('Biblioteca del Bachillerato Santiago'),
 ('Biblioteca Comercio y Nutrición');
 
--- USUARIO
+-- Insertando un universitario
 INSERT INTO usuarios (US_Nombre, US_Correo, US_Pass, US_Rol, US_Dependencia)
 VALUES
 ('Fernando Ceballos', 'correo@ucol.mx', '1234','1','1');
 
+-- Insertando un bibliotecario
+INSERT INTO usuarios (US_Nombre, US_Correo, US_Pass, US_Rol, US_Dependencia)
+VALUES
+('Señor Bibliotecario ', 'biblio@ucol.mx', '1234','3','1');
 
 INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante) VALUES (now(),'send nudes','1','1');
 INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Biblioteca) VALUES (now(),'holy macarroni','1','1','10');
 INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Biblioteca) VALUES (now(),'mientras tenga hoyo aunque sea de pollo','1','1','10');
+
+-- Ceballos mandando un mensaje al ticket 1
+INSERT INTO tickets (me_ticket,me_usuario,me_fecha,me_contenido) 
+VALUES (1,1,now(),'qué pedo compa, ya me van a atender o queso babas');
+
+-- Bibliotecario mandando otro mensaje al ticket 1
+INSERT INTO tickets (me_ticket,me_usuario,me_fecha,me_contenido) 
+VALUES (1,2,now(),'en eso ando, aguanta bara');
+
+-- Bibliotecario mandando otro mensaje más al ticket 1
+INSERT INTO tickets (me_ticket,me_usuario,me_fecha,me_contenido) 
+VALUES (1,2,now(),'¿qué chingados querías?');

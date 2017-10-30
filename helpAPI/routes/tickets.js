@@ -243,7 +243,7 @@ router.get('/mod/message/:usr/:idt/:msg', function(req, res, next) {
 
     mensaje = new Mensaje({
     me_ticket: idt,
-    me_usuario: pwd,
+    me_usuario: usr,
     me_fecha: 'NOW();',
     me_contenido: msg
   });
