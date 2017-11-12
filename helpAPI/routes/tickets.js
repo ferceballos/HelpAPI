@@ -38,6 +38,7 @@ router.get('/getbyfolio/:folio', function (req, res, next) {
           folio: rows[i].TI_Folio,
           fechaAlta: rows[i].TI_Fecha_Hora_Alta,
           peticion: rows[i].TI_Peticion,
+          init: rows[i].TI_Init,
           fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
           rate: rows[i].TI_Calificacion,
           status: rows[i].TI_Status,
@@ -60,6 +61,8 @@ router.get('/getbyuser/:user', function (req, res, next) {
   var user = req.params.user;
   //Regresa todos los datos de todos los tickets que tenga un usuario 
   ticket.find('all', { where: "TI_Usuario_Solicitante='" + user + "'" }, function (err, rows) {
+  //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
+
     if (rows != '') {
       var tickets = {
         ticketito: []
@@ -69,7 +72,8 @@ router.get('/getbyuser/:user', function (req, res, next) {
         tickets.ticketito.push({
           folio: rows[i].TI_Folio,
           fechaAlta: rows[i].TI_Fecha_Hora_Alta,
-          peticion: rows[i].TI_Peticion,
+          asunto: rows[i].TI_Peticion,
+          init : rows[i].TI_Init,
           fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
           rate: rows[i].TI_Calificacion,
           status: rows[i].TI_Status,
@@ -92,7 +96,9 @@ router.get('/getbylibrarian/:id', function (req, res, next) {
   var id = req.params.id;
   //Regresa todo los datos del ticket que estan asignados a un bibliotecario 
   ticket.find('TI_Folio, TI_Fecha_Hora_Alta, TI_Peticion, TI_Fecha_Hora_Cierre, TI_Calificacion, TI_Status, TI_Usuario_Solicitante', { where: "TI_Usuario_Bibliotecario=" + id + "" }, function (err, rows) {
-    if (rows != '') {
+  //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
+
+  if (rows != '') {
       var tickets = {
         ticketito: []
       };
@@ -222,11 +228,12 @@ router.get('/mod/library/:idt/:dep', function (req, res, next) {
 });
 
 //Crear un ticket
-router.get('/create/:peti/:ids', function (req, res, next) {
+router.get('/create/:peti/:init/:ids', function (req, res, next) {
   var peti = req.params.peti;
   var ids = req.params.ids;
+  var init = req.params.init;
 
-  ticket.query("INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante) VALUES (now(),'" + peti + "','1','" + ids + "');", function (err, callback) {
+  ticket.query("INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Init) VALUES (now(),'" + peti + "','1','" + ids + "','" + init+ "');", function (err, callback) {
     if (callback != null)
       res.json({ code: 1, msg: "Ticket enviado con éxito" });
     else

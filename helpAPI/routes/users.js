@@ -39,6 +39,7 @@ router.get('/login/:mail/:pwd', function(req, res, next) {
 				code:3, 
 				msg:'Las credenciales son correctas',
 				user : { 
+          id : rows[0].US_ID,
 					name: rows[0].US_Nombre,
 					mail: rows[0].US_Correo,
 					rol : rows[0].US_Rol,
@@ -47,6 +48,34 @@ router.get('/login/:mail/:pwd', function(req, res, next) {
 			});
 		}
       }
+  });
+});
+
+//Obtener todas las dependencias
+router.get('/getDep', function(req, res, next) {
+
+
+    user.query("SELECT * FROM `dependencias`", function(err, rows){
+      //No hay dependencias
+      if(rows==""){
+        res.json({code:1, msg:'Dependencias no encontradas'});
+      }
+
+      //Dependencias encontradas
+      else{
+
+        var dependencias = {
+        dependencies: []
+      };
+
+      for (var i = 0; i < rows.length; i++) {
+        dependencias.dependencies.push({
+         id: rows[i].DE_ID,
+          nombre: rows[i].DE_Dependencia
+        });
+      }
+      res.send(dependencias);
+    }  
   });
 });
 

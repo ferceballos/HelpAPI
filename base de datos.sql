@@ -64,6 +64,7 @@ CREATE TABLE `tickets` (
   `TI_Folio` int(10) NOT NULL AUTO_INCREMENT,
   `TI_Fecha_Hora_Alta` datetime NOT NULL,
   `TI_Peticion` text NOT NULL,
+  `TI_Init` text NOT NULL,
   `TI_Fecha_Hora_Cierre` datetime,
   `TI_Calificacion` tinyint(5),
   `TI_Status` int(10) NOT NULL,
