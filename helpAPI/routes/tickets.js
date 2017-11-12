@@ -19,7 +19,7 @@ var Mensaje = MyAppModel.extend({
 });
 
 ticket = new Ticket();
-mensaje = new Mensaje();
+var mensaje = new Mensaje();
 
 //Direcciones y metodos empiezan aqui
 
@@ -248,12 +248,16 @@ router.get('/mod/message/:usr/:idt/:msg', function (req, res, next) {
   var idt = req.params.idt;
   var msg = req.params.msg;
 
-  mensaje = new Mensaje({
-    me_ticket: idt,
-    me_usuario: usr,
-    me_fecha: 'NOW();',
-    me_contenido: msg
+  mensaje.query("INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Init) VALUES (now(),'" + peti + "','1','" + ids + "','" + init + "');", function (err, callback) {
+    if (callback != null)
+      res.json({ code: 1, msg: "Ticket enviado con éxito" });
+    else
+      res.json({ code: 2, msg: "Ha ocurrido un problema al enviar el ticket, inténtelo de nuevo" });
   });
+
+  mensaje.save();
+
+  res.send('Message sent');
 });
 
 // Obtener todos los mensajes de un ticket
