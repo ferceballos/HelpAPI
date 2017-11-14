@@ -27,7 +27,8 @@ var mensaje = new Mensaje();
 router.get('/getbyfolio/:folio', function (req, res, next) {
   var folio = req.params.folio;
   //Regresa todos los datos del ticket con el folio solicitado 
-  ticket.find('all', { where: "TI_Folio=" + folio + "" }, function (err, rows) {
+
+  ticket.query('select ti_folio, date_format(ti_fecha_hora_alta, "%M %d, %Y") as fecha_alta, ti_peticion, ti_init, date_format(ti_fecha_hora_cierre, "%M %d, %Y") as fecha_cierre, ti_calificacion, st_status, US1.us_nombre as usuario_solcitante, (select us_nombre from usuarios where us_id = ti_usuario_bibliotecario) as usuario_bibliotecario, de_dependencia from tickets left join status on st_id= ti_status inner join usuarios US1 on US1.us_id = ti_usuario_solicitante left join dependencias on de_id = ti_biblioteca WHERE ti_folio =' + folio, function (err, rows) {
     if (rows != '') {
       var tickets = {
         ticketito: []
@@ -35,16 +36,16 @@ router.get('/getbyfolio/:folio', function (req, res, next) {
 
       for (var i = 0; i < rows.length; i++) {
         tickets.ticketito.push({
-          folio: rows[i].TI_Folio,
-          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
-          peticion: rows[i].TI_Peticion,
-          init: rows[i].TI_Init,
-          fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
-          rate: rows[i].TI_Calificacion,
-          status: rows[i].TI_Status,
-          solicitante: rows[i].TI_Usuario_Solicitante,
-          bibliotecario: rows[i].TI_Usuario_Bibliotecario,
-          biblioteca: rows[i].TI_Biblioteca
+          folio: rows[i].ti_folio,
+          fechaAlta: rows[i].fecha_alta,
+          peticion: rows[i].ti_peticion,
+          init: rows[i].ti_init,
+          fechaCierre: rows[i].fecha_cierre,
+          rate: rows[i].ti_calificacion,
+          status: rows[i].st_status,
+          solicitante: rows[i].usuario_solcitante,
+          bibliotecario: rows[i].usuario_bibliotecario,
+          biblioteca: rows[i].de_dependencia
         });
       }
 
@@ -61,7 +62,7 @@ router.get('/getbyuser/:user', function (req, res, next) {
   var user = req.params.user;
   //Regresa todos los datos de todos los tickets que tenga un usuario 
   ticket.find('all', { where: "TI_Usuario_Solicitante='" + user + "'" }, function (err, rows) {
-  //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
+    //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
 
     if (rows != '') {
       var tickets = {
@@ -73,7 +74,7 @@ router.get('/getbyuser/:user', function (req, res, next) {
           folio: rows[i].TI_Folio,
           fechaAlta: rows[i].TI_Fecha_Hora_Alta,
           asunto: rows[i].TI_Peticion,
-          init : rows[i].TI_Init,
+          init: rows[i].TI_Init,
           fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
           rate: rows[i].TI_Calificacion,
           status: rows[i].TI_Status,
@@ -96,9 +97,9 @@ router.get('/getbylibrarian/:id', function (req, res, next) {
   var id = req.params.id;
   //Regresa todo los datos del ticket que estan asignados a un bibliotecario 
   ticket.find('TI_Folio, TI_Fecha_Hora_Alta, TI_Peticion, TI_Fecha_Hora_Cierre, TI_Calificacion, TI_Status, TI_Usuario_Solicitante', { where: "TI_Usuario_Bibliotecario=" + id + "" }, function (err, rows) {
-  //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
+    //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
 
-  if (rows != '') {
+    if (rows != '') {
       var tickets = {
         ticketito: []
       };
@@ -233,7 +234,7 @@ router.get('/create/:peti/:init/:ids', function (req, res, next) {
   var ids = req.params.ids;
   var init = req.params.init;
 
-  ticket.query("INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Init) VALUES (now(),'" + peti + "','1','" + ids + "','" + init+ "');", function (err, callback) {
+  ticket.query("INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Init) VALUES (now(),'" + peti + "','1','" + ids + "','" + init + "');", function (err, callback) {
     if (callback != null)
       res.json({ code: 1, msg: "Ticket enviado con éxito" });
     else
@@ -248,24 +249,20 @@ router.get('/mod/message/:usr/:idt/:msg', function (req, res, next) {
   var idt = req.params.idt;
   var msg = req.params.msg;
 
-  mensaje.query("INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Init) VALUES (now(),'" + peti + "','1','" + ids + "','" + init + "');", function (err, callback) {
+  mensaje.query("INSERT INTO `mensajes`(`me_ticket`, `me_usuario`, `me_fecha`, `me_contenido`) VALUES (" + idt + ", " + usr + ", now(), '" + msg + "')", function (err, callback) {
     if (callback != null)
-      res.json({ code: 1, msg: "Ticket enviado con éxito" });
+      res.json({ code: 1, msg: "Mensaje enviado con éxito" });
     else
-      res.json({ code: 2, msg: "Ha ocurrido un problema al enviar el ticket, inténtelo de nuevo" });
+      res.json({ code: 2, msg: "Ha ocurrido un problema al enviar el mensaje, inténtelo de nuevo" });
   });
-
-  mensaje.save();
-
-  res.send('Message sent');
 });
 
 // Obtener todos los mensajes de un ticket
 router.get('/get/messages/:idt', function (req, res, next) {
   var idt = req.params.idt;
-  
 
-  mensaje.find('all', { where: "me_ticket = "+idt }, function (err, rows) {    
+
+  mensaje.query("SELECT * FROM `mensajes` WHERE me_ticket =" + idt, function (err, rows) {
     if (rows[0] != null) {
       var mensajes = {
         mensajitos: []
@@ -273,8 +270,8 @@ router.get('/get/messages/:idt', function (req, res, next) {
 
       for (var i = 0; i < rows.length; i++) {
         mensajes.mensajitos.push({
-          id : rows[i].me_id,
-          usuario: rows[i].me_usuario,
+          id: rows[i].me_id,
+          userMsg: rows[i].me_usuario,
           fecha: rows[i].me_fecha,
           contenido: rows[i].me_contenido
         });
