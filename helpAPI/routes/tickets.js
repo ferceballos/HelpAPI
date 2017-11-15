@@ -92,6 +92,41 @@ router.get('/getbyuser/:user', function (req, res, next) {
   })
 });
 
+//Obtener​ ​todos​ ​los​ ​tickets​ ​del universo
+router.get('/getAll', function (req, res, next) {
+
+  //Regresa todos los datos de todos los tickets que tenga un usuario 
+  ticket.query('select ti_folio, date_format(ti_fecha_hora_alta, "%M %d, %Y") as fecha_alta, ti_peticion, ti_init, date_format(ti_fecha_hora_cierre, "%M %d, %Y") as fecha_cierre, ti_calificacion, st_status, US1.us_nombre as usuario_solcitante, (select us_nombre from usuarios where us_id = ti_usuario_bibliotecario) as usuario_bibliotecario, de_dependencia from tickets left join status on st_id= ti_status inner join usuarios US1 on US1.us_id = ti_usuario_solicitante left join dependencias on de_id = ti_biblioteca', function (err, rows) {
+    //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
+
+    if (rows != undefined) {
+      var tickets = {
+        ticketito: []
+      };
+
+      for (var i = 0; i < rows.length; i++) {
+        tickets.ticketito.push({
+          folio: rows[i].ti_folio,
+          fechaAlta: rows[i].fecha_alta,
+          peticion: rows[i].ti_peticion,
+          init: rows[i].ti_init,
+          fechaCierre: rows[i].fecha_cierre,
+          rate: rows[i].ti_calificacion,
+          status: rows[i].st_status,
+          solicitante: rows[i].usuario_solcitante,
+          bibliotecario: rows[i].usuario_bibliotecario,
+          biblioteca: rows[i].de_dependencia
+        });
+      }
+
+      res.send(tickets);
+
+    }
+    else
+      res.json({ code: 2, msg: 'Usuario sin tickets o Usuario inexistente' });
+  })
+});
+
 //Obtener​ ​todos​ ​los​ ​tickets​ ​asignados​ ​a​ ​un​ ​bibliotecario
 router.get('/getbylibrarian/:id', function (req, res, next) {
   var id = req.params.id;

@@ -28,6 +28,9 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `dependencias`
 --
 
+CREATE DATABASE pi7;
+USE pi7;
+
 CREATE TABLE `dependencias` (
   `DE_ID` int(10) NOT NULL,
   `DE_Dependencia` varchar(50) NOT NULL
