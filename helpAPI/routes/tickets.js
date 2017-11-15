@@ -29,7 +29,7 @@ router.get('/getbyfolio/:folio', function (req, res, next) {
   //Regresa todos los datos del ticket con el folio solicitado 
 
   ticket.query('select ti_folio, date_format(ti_fecha_hora_alta, "%M %d, %Y") as fecha_alta, ti_peticion, ti_init, date_format(ti_fecha_hora_cierre, "%M %d, %Y") as fecha_cierre, ti_calificacion, st_status, US1.us_nombre as usuario_solcitante, (select us_nombre from usuarios where us_id = ti_usuario_bibliotecario) as usuario_bibliotecario, de_dependencia from tickets left join status on st_id= ti_status inner join usuarios US1 on US1.us_id = ti_usuario_solicitante left join dependencias on de_id = ti_biblioteca WHERE ti_folio =' + folio, function (err, rows) {
-    if (rows != '') {
+    if (rows != undefined) {
       var tickets = {
         ticketito: []
       };
@@ -244,6 +244,21 @@ router.get('/create/:peti/:init/:ids', function (req, res, next) {
 
 });
 
+//Crear un registro en el historial de un ticket
+router.get('/log/insert/:comentario/:idet/:idt', function (req, res, next) {
+  var comentario = req.params.comentario;
+  var idet = req.params.idet;
+  var idt = req.params.idt;
+
+  ticket.query("INSERT INTO `logs`(`lo_fecha`, `lo_comentario`, `lo_etiqueta`, `lo_ticket`) VALUES (now(),'" + comentario + "'," + idet + "," + idt+")", function (err, callback) {
+    if (callback != null)
+      res.json({ code: 1, msg: "Registro en historial enviado con éxito" });
+    else
+      res.json({ code: 2, msg: "Ha ocurrido un problema al enviar el registro a historial, inténtelo de nuevo" });
+  });
+
+});
+
 // Mandar mensaje a un ticket
 router.get('/mod/message/:usr/:idt/:msg', function (req, res, next) {
   var usr = req.params.usr;
@@ -302,19 +317,21 @@ router.get('/mod/status/:idt/:estado', function (req, res, next) {
   });
 });
 
+
+
 //Calificar un ticket
 router.get('/mod/rate/:idt/:stars', function (req, res, next) {
   var idt = parseInt(req.params.idt);
-  var estado = parseInt(req.params.estado);
+  var stars = parseInt(req.params.stars);
+  console.log(idt,' idt')
+  console.log(stars, ' stars')
 
-  console.log('entre al metodo');
-
-  ticket.query("UPDATE tickets SET TI_Status = '" + estado + "' WHERE TI_Folio = '" + idt + "';", function (err, callback) {
+  ticket.query("UPDATE tickets SET TI_Calificacion = '" + stars + "' WHERE TI_Folio = '" + idt + "';", function (err, callback) {
     if (callback != null) {
       res.json({ code: 1, msg: "Status cambiado con éxito" });
     }
     else {
-      res.json({ code: 2, msg: "Ha ocurrido un problema al cambiar status, inténtelo de nuevo" });
+      res.json({ code: 2, msg: "Ha ocurrido un problema al cambiar calificacion, inténtelo de nuevo" });
     }
   });
 });
