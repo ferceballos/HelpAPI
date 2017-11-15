@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.0
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-11-2017 a las 08:45:28
--- Versión del servidor: 10.1.25-MariaDB
--- Versión de PHP: 7.1.7
+-- Tiempo de generación: 15-11-2017 a las 19:31:00
+-- Versión del servidor: 10.1.26-MariaDB
+-- Versión de PHP: 7.1.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -136,7 +136,8 @@ INSERT INTO `mensajes` (`me_id`, `me_ticket`, `me_usuario`, `me_fecha`, `me_cont
 (4, 4, 3, '2017-11-14 20:08:38', '2weqweqwew'),
 (5, 4, 3, '2017-11-14 20:33:51', 'qqqq'),
 (6, 4, 3, '2017-11-14 20:33:54', 'qweqwe'),
-(7, 4, 3, '2017-11-14 20:33:56', 'eeee');
+(7, 4, 3, '2017-11-14 20:33:56', 'eeee'),
+(8, 4, 6, '2017-11-15 11:04:33', 'A mí también me gusta cogérmelo');
 
 -- --------------------------------------------------------
 
@@ -204,11 +205,11 @@ CREATE TABLE `tickets` (
 
 INSERT INTO `tickets` (`TI_Folio`, `TI_Fecha_Hora_Alta`, `TI_Peticion`, `TI_Init`, `TI_Fecha_Hora_Cierre`, `TI_Calificacion`, `TI_Status`, `TI_Usuario_Solicitante`, `TI_Usuario_Bibliotecario`, `TI_Biblioteca`) VALUES
 (1, '2017-11-14 20:04:54', 'send nudes', '', NULL, NULL, 1, 1, NULL, NULL),
-(2, '2017-11-14 20:04:54', 'holy macarroni', '', NULL, NULL, 1, 1, NULL, 10),
+(2, '2017-11-14 20:04:54', 'holy macarroni', '', NULL, NULL, 2, 1, NULL, 10),
 (3, '2017-11-14 20:04:54', 'mientras tenga hoyo aunque sea de pollo', '', NULL, NULL, 1, 1, NULL, 10),
 (4, '2017-11-14 20:07:23', 'Me gusta cogerme a Ramón', 'Duro y tupido.', NULL, 4, 3, 3, NULL, NULL),
 (5, '2017-11-14 20:07:38', 'This shit is working now', 'No fue necesario explicar más a fondo.', NULL, 2, 1, 3, NULL, NULL),
-(6, '2017-11-14 20:08:08', 'Orlando se va a pichar la peda', 'Y unos pizzillas también alv', NULL, 5, 3, 3, NULL, NULL);
+(6, '2017-11-14 20:08:08', 'Orlando se va a pichar la peda', 'Y unos pizzillas también alv', NULL, 2, 3, 3, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -233,7 +234,9 @@ INSERT INTO `usuarios` (`US_ID`, `US_Nombre`, `US_Correo`, `US_Pass`, `US_Rol`, 
 (1, 'Fernando Ceballos', 'correo@ucol.mx', '1234', 1, 1),
 (2, 'Señor Bibliotecario ', 'biblio@ucol.mx', '1234', 3, 1),
 (3, 'Fernando', 'ceballos@ucol.mx', '1234', 1, 1),
-(4, 'Fernando', 'ceballos@ucol.mx', '1234', 1, 1);
+(4, 'Fernando', 'ceballos@ucol.mx', '1234', 1, 1),
+(5, 'Don Admin', 'admin@ucol.mx', '1234', 4, 1),
+(6, 'Don Responsable', 'respo@ucol.mx', '1234', 2, 1);
 
 --
 -- Índices para tablas volcadas
@@ -307,41 +310,49 @@ ALTER TABLE `usuarios`
 --
 ALTER TABLE `dependencias`
   MODIFY `DE_ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
 --
 -- AUTO_INCREMENT de la tabla `etiquetas`
 --
 ALTER TABLE `etiquetas`
   MODIFY `ET_ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
 --
 -- AUTO_INCREMENT de la tabla `logs`
 --
 ALTER TABLE `logs`
   MODIFY `lo_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT de la tabla `mensajes`
 --
 ALTER TABLE `mensajes`
-  MODIFY `me_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `me_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
 --
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
   MODIFY `RO_ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
 --
 -- AUTO_INCREMENT de la tabla `status`
 --
 ALTER TABLE `status`
   MODIFY `ST_ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT de la tabla `tickets`
 --
 ALTER TABLE `tickets`
   MODIFY `TI_Folio` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `US_ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `US_ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
 --
 -- Restricciones para tablas volcadas
 --
