@@ -234,6 +234,7 @@ router.get('/create/:peti/:init/:ids', function (req, res, next) {
   var ids = req.params.ids;
   var init = req.params.init;
 
+  console.log('peti', peti, ' ', 'ids', ids, ' ', 'init', init);
   ticket.query("INSERT INTO tickets (TI_Fecha_Hora_Alta,TI_Peticion,TI_Status,TI_Usuario_Solicitante, TI_Init) VALUES (now(),'" + peti + "','1','" + ids + "','" + init + "');", function (err, callback) {
     if (callback != null)
       res.json({ code: 1, msg: "Ticket enviado con éxito" });
