@@ -79,6 +79,7 @@ router.get('/getDep', function(req, res, next) {
   });
 });
 
+//Registrar un Usuaio 
 router.get('/signup/:name/:mail/:pwd/:rol/:dep', function(req, res, next) {
   var name = req.params.name;
   var mail = req.params.mail;
@@ -102,7 +103,9 @@ router.get('/signup/:name/:mail/:pwd/:rol/:dep', function(req, res, next) {
   });
 });
 
+//Borrar Usuario 
 router.get('/delete/:id', function(req, res, next) {
+  //Id Usuario 
   var id = req.params.id;
 
   user.query("DELETE FROM usuarios WHERE US_ID='"+id+"';", function(err, callback){ 
@@ -113,8 +116,11 @@ router.get('/delete/:id', function(req, res, next) {
   });
 });
 
+//Modifcar el rol de un usuario
 router.get('/modrol/:id/:rol', function(req, res, next) {
+  //Id del usuario
   var id = req.params.id;
+  //Id del rol 
   var rol = req.params.rol;
   user.query("UPDATE usuarios SET US_Rol="+rol+" WHERE US_ID="+id+";", function(err, callback){ 
      if(callback!=null){

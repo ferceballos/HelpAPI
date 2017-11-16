@@ -10,10 +10,12 @@ var MyAppModel = mysqlModel.createConnection({
   database: 'pi7',
 });
 
+//Se hace coneccion a la tabla de Tickets
 var Ticket = MyAppModel.extend({
   tableName: "tickets",
 });
 
+//Se hace coneccion a la tabla de Mensajes
 var Mensaje = MyAppModel.extend({
   tableName: "mensajes",
 });
@@ -59,6 +61,7 @@ router.get('/getbyfolio/:folio', function (req, res, next) {
 
 //Obtener​ ​todos​ ​los​ ​tickets​ ​de​ ​un​ ​usuario
 router.get('/getbyuser/:user', function (req, res, next) {
+  //Usuario
   var user = req.params.user;
   //Regresa todos los datos de todos los tickets que tenga un usuario 
   ticket.find('all', { where: "TI_Usuario_Solicitante='" + user + "'" }, function (err, rows) {
@@ -129,6 +132,7 @@ router.get('/getAll', function (req, res, next) {
 
 //Obtener​ ​todos​ ​los​ ​tickets​ ​asignados​ ​a​ ​un​ ​bibliotecario
 router.get('/getbylibrarian/:id', function (req, res, next) {
+  //ID del bibliotecario
   var id = req.params.id;
   //Regresa todo los datos del ticket que estan asignados a un bibliotecario 
   ticket.find('TI_Folio, TI_Fecha_Hora_Alta, TI_Peticion, TI_Fecha_Hora_Cierre, TI_Calificacion, TI_Status, TI_Usuario_Solicitante', { where: "TI_Usuario_Bibliotecario=" + id + "" }, function (err, rows) {
@@ -163,6 +167,7 @@ router.get('/getbylibrarian/:id', function (req, res, next) {
 
 //Obtener todos los tickets asignados a una biblioteca
 router.get('/getbylibrary/:dep', function (req, res, next) {
+  //ID de la Libreria 
   var dep = req.params.dep;
   console.log("El id de la dependencia es " + dep);
 
@@ -233,7 +238,9 @@ router.get('/', function (req, res, next) {
 
 //Asignar​ ​un​ ​ticket​ ​a​ ​un​ ​bibliotecario
 router.get('/mod/librarian/:idt/:idb', function (req, res, next) {
+  //Esta variable es el ID del Ticket
   var idt = req.params.idt;
+  //Esta variable es el ID del Bibliotecario 
   var idb = req.params.idb;
 
   ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, callback) {
@@ -249,7 +256,9 @@ router.get('/mod/librarian/:idt/:idb', function (req, res, next) {
 
 //Asignar​ ​un​ ​ticket​ ​a​ una biblioteca
 router.get('/mod/library/:idt/:dep', function (req, res, next) {
+   //ID del Ticket
   var idt = req.params.idt;
+   //ID de la Biblioteca
   var dep = req.params.dep;
 
   ticket.query("UPDATE tickets SET TI_Biblioteca = " + dep + " WHERE TI_Folio='" + idt + "';", function (err, callback) {
@@ -265,8 +274,11 @@ router.get('/mod/library/:idt/:dep', function (req, res, next) {
 
 //Crear un ticket
 router.get('/create/:peti/:init/:ids', function (req, res, next) {
+  //Peticion
   var peti = req.params.peti;
+  //Usuario
   var ids = req.params.ids;
+  //Mensaje Inicial
   var init = req.params.init;
 
   console.log('peti', peti, ' ', 'ids', ids, ' ', 'init', init);
@@ -281,8 +293,11 @@ router.get('/create/:peti/:init/:ids', function (req, res, next) {
 
 //Crear un registro en el historial de un ticket
 router.get('/log/insert/:comentario/:idet/:idt', function (req, res, next) {
+  //Comentario del Ticket
   var comentario = req.params.comentario;
+  //Id Etiqueta 
   var idet = req.params.idet;
+  //Id Ticket
   var idt = req.params.idt;
 
   ticket.query("INSERT INTO `logs`(`lo_fecha`, `lo_comentario`, `lo_etiqueta`, `lo_ticket`) VALUES (now(),'" + comentario + "'," + idet + "," + idt+")", function (err, callback) {
@@ -296,8 +311,11 @@ router.get('/log/insert/:comentario/:idet/:idt', function (req, res, next) {
 
 // Mandar mensaje a un ticket
 router.get('/mod/message/:usr/:idt/:msg', function (req, res, next) {
+  //Usuario
   var usr = req.params.usr;
+  //Id Ticket
   var idt = req.params.idt;
+  //Mensaje 
   var msg = req.params.msg;
 
   mensaje.query("INSERT INTO `mensajes`(`me_ticket`, `me_usuario`, `me_fecha`, `me_contenido`) VALUES (" + idt + ", " + usr + ", now(), '" + msg + "')", function (err, callback) {
@@ -310,6 +328,7 @@ router.get('/mod/message/:usr/:idt/:msg', function (req, res, next) {
 
 // Obtener todos los mensajes de un ticket
 router.get('/get/messages/:idt', function (req, res, next) {
+  //ID del Ticket 
   var idt = req.params.idt;
 
 
@@ -337,7 +356,9 @@ router.get('/get/messages/:idt', function (req, res, next) {
 
 //Modificar​ ​el​ ​estado​ ​de​ ​un​ ​ticket​ ​(Abierto,​ ​en​ ​proceso,​ ​cerrado,​ ​etc) 
 router.get('/mod/status/:idt/:estado', function (req, res, next) {
+  //Id Ticket
   var idt = parseInt(req.params.idt);
+  //Estado del Ticket 
   var estado = parseInt(req.params.estado);
 
   console.log('entre al metodo');
@@ -356,7 +377,9 @@ router.get('/mod/status/:idt/:estado', function (req, res, next) {
 
 //Calificar un ticket
 router.get('/mod/rate/:idt/:stars', function (req, res, next) {
+  //Id Ticket
   var idt = parseInt(req.params.idt);
+  //Cantidad de Estrellas
   var stars = parseInt(req.params.stars);
   console.log(idt,' idt')
   console.log(stars, ' stars')
