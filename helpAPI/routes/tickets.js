@@ -203,10 +203,10 @@ router.get('/getbylibrary/:dep', function (req, res, next) {
   })
 });
 
-//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ ​no​ ​han​ ​sido​ ​cerrados
-router.get('/getbyopened', function (req, res, next) {
-  //Regresa todos los datos de los tickets diferente a 3=cerrado 
-  ticket.find('all', { where: "TI_Status<>3" }, function (err, rows) {
+//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ son nuevos 
+router.get('/getByNew', function (req, res, next) {
+  //Regresa todos los datos de los tickets con TI_Status 1 
+  ticket.find('all', { where: "TI_Status=1" }, function (err, rows) {
     {
       var tickets = {
         ticketito: []
@@ -217,6 +217,68 @@ router.get('/getbyopened', function (req, res, next) {
           folio: rows[i].TI_Folio,
           fechaAlta: rows[i].TI_Fecha_Hora_Alta,
           peticion: rows[i].TI_Peticion,
+          init: rows[i].TI_Init,
+          fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
+          rate: rows[i].TI_Calificacion,
+          status: rows[i].TI_Status,
+          solicitante: rows[i].TI_Usuario_Solicitante,
+          bibliotecario: rows[i].TI_Usuario_Bibliotecario,
+          biblioteca: rows[i].TI_Biblioteca
+        });
+      }
+
+      res.send(tickets);
+
+    }
+  })
+});
+
+
+//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ estan en proceso
+router.get('/getByDoing', function (req, res, next) {
+  //Regresa todos los datos de los tickets con TI_Status 1 
+  ticket.find('all', { where: "TI_Status=2" }, function (err, rows) {
+    {
+      var tickets = {
+        ticketito: []
+      };
+
+      for (var i = 0; i < rows.length; i++) {
+        tickets.ticketito.push({
+          folio: rows[i].TI_Folio,
+          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+          peticion: rows[i].TI_Peticion,
+          init: rows[i].TI_Init,
+          fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
+          rate: rows[i].TI_Calificacion,
+          status: rows[i].TI_Status,
+          solicitante: rows[i].TI_Usuario_Solicitante,
+          bibliotecario: rows[i].TI_Usuario_Bibliotecario,
+          biblioteca: rows[i].TI_Biblioteca
+        });
+      }
+
+      res.send(tickets);
+
+    }
+  })
+});
+
+//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ estan cerrados
+router.get('/getByDone', function (req, res, next) {
+  //Regresa todos los datos de los tickets con TI_Status 1 
+  ticket.find('all', { where: "TI_Status=3" }, function (err, rows) {
+    {
+      var tickets = {
+        ticketito: []
+      };
+
+      for (var i = 0; i < rows.length; i++) {
+        tickets.ticketito.push({
+          folio: rows[i].TI_Folio,
+          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+          peticion: rows[i].TI_Peticion,
+          init: rows[i].TI_Init,
           fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
           rate: rows[i].TI_Calificacion,
           status: rows[i].TI_Status,
@@ -256,9 +318,9 @@ router.get('/mod/librarian/:idt/:idb', function (req, res, next) {
 
 //Asignar​ ​un​ ​ticket​ ​a​ una biblioteca
 router.get('/mod/library/:idt/:dep', function (req, res, next) {
-   //ID del Ticket
+  //ID del Ticket
   var idt = req.params.idt;
-   //ID de la Biblioteca
+  //ID de la Biblioteca
   var dep = req.params.dep;
 
   ticket.query("UPDATE tickets SET TI_Biblioteca = " + dep + " WHERE TI_Folio='" + idt + "';", function (err, callback) {
@@ -300,7 +362,7 @@ router.get('/log/insert/:comentario/:idet/:idt', function (req, res, next) {
   //Id Ticket
   var idt = req.params.idt;
 
-  ticket.query("INSERT INTO `logs`(`lo_fecha`, `lo_comentario`, `lo_etiqueta`, `lo_ticket`) VALUES (now(),'" + comentario + "'," + idet + "," + idt+")", function (err, callback) {
+  ticket.query("INSERT INTO `logs`(`lo_fecha`, `lo_comentario`, `lo_etiqueta`, `lo_ticket`) VALUES (now(),'" + comentario + "'," + idet + "," + idt + ")", function (err, callback) {
     if (callback != null)
       res.json({ code: 1, msg: "Registro en historial enviado con éxito" });
     else
@@ -381,7 +443,7 @@ router.get('/mod/rate/:idt/:stars', function (req, res, next) {
   var idt = parseInt(req.params.idt);
   //Cantidad de Estrellas
   var stars = parseInt(req.params.stars);
-  console.log(idt,' idt')
+  console.log(idt, ' idt')
   console.log(stars, ' stars')
 
   ticket.query("UPDATE tickets SET TI_Calificacion = '" + stars + "' WHERE TI_Folio = '" + idt + "';", function (err, callback) {
