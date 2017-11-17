@@ -51,12 +51,10 @@ router.get('/login/:mail/:pwd', function (req, res, next) {
   });
 });
 
-//Obtener todos los usuarios que sean universitarios o bibliotecarios
-router.get('/uniAndBib', function (req, res, next) {
-  var mail = req.params.mail;
-  var pwd = req.params.pwd;
-  //Primero que nada, verificar si el correo está registrado en la base de datos
-  user.query("SELECT * FROM `usuarios` WHERE us_rol = 1 OR us_rol = 3", function (err, rows) {
+//Obtener todos los usuarios que sean bibliotecarios
+router.get('/getLibrarians', function (req, res, next) {
+
+  user.query("SELECT * FROM `usuarios` WHERE  us_rol = 3", function (err, rows) {
     //Correo no registrado
     if (rows == undefined) {
       res.json({ code: 2, msg: 'El correo introducido no está registrado' });
@@ -76,13 +74,43 @@ router.get('/uniAndBib', function (req, res, next) {
           mail: rows[i].US_Correo,
           rol: rows[i].US_Rol,
           dep: rows[i].US_Dependencia,
-          switchid: "vm.resSwitches." + rows[i].US_ID
         });
       }
       res.send(usuarios);
     }
   });
 });
+
+//Obtener todos los usuarios que sean universitarios
+router.get('/getStudents', function (req, res, next) {
+
+  user.query("SELECT * FROM `usuarios` WHERE us_rol = 1", function (err, rows) {
+    //Correo no registrado
+    if (rows == undefined) {
+      res.json({ code: 2, msg: 'El correo introducido no está registrado' });
+    }
+
+    //Correo registrado
+    else {
+
+      var usuarios = {
+        users: []
+      };
+
+      for (var i = 0; i < rows.length; i++) {
+        usuarios.users.push({
+          id: rows[i].US_ID,
+          name: rows[i].US_Nombre,
+          mail: rows[i].US_Correo,
+          rol: rows[i].US_Rol,
+          dep: rows[i].US_Dependencia,
+        });
+      }
+      res.send(usuarios);
+    }
+  });
+});
+
 
 //Obtener todas las dependencias
 router.get('/getDep', function (req, res, next) {
