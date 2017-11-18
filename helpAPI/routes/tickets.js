@@ -130,30 +130,32 @@ router.get('/getAll', function (req, res, next) {
   })
 });
 
-//Obtener​ ​todos​ ​los​ ​tickets​ ​asignados​ ​a​ ​un​ ​bibliotecario
-router.get('/getbylibrarian/:id', function (req, res, next) {
-  //ID del bibliotecario
-  var id = req.params.id;
-  //Regresa todo los datos del ticket que estan asignados a un bibliotecario 
-  ticket.find('TI_Folio, TI_Fecha_Hora_Alta, TI_Peticion, TI_Fecha_Hora_Cierre, TI_Calificacion, TI_Status, TI_Usuario_Solicitante', { where: "TI_Usuario_Bibliotecario=" + id + "" }, function (err, rows) {
+//Obtener​ ​todos​ ​los​ ​tickets​ ​asignados a un bibliotecario
+router.get('/getByLibrarian/:idl', function (req, res, next) {
+  //Usuario
+  var idl = req.params.idl;
+
+  //Regresa todos los datos de todos los tickets que tenga un usuario 
+  ticket.query('select TI_Usuario_Bibliotecario, ti_folio, date_format(ti_fecha_hora_alta, "%M %d, %Y") as fecha_alta, ti_peticion, ti_init, date_format(ti_fecha_hora_cierre, "%M %d, %Y") as fecha_cierre, ti_calificacion, st_status, US1.us_nombre as usuario_solcitante, (select us_nombre from usuarios where us_id = ti_usuario_bibliotecario) as usuario_bibliotecario, de_dependencia from tickets left join status on st_id= ti_status inner join usuarios US1 on US1.us_id = ti_usuario_solicitante left join dependencias on de_id = ti_biblioteca WHERE TI_Usuario_Bibliotecario = ' + idl, function (err, rows) {
     //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
 
-    if (rows != '') {
+    if (rows != undefined) {
       var tickets = {
         ticketito: []
       };
 
       for (var i = 0; i < rows.length; i++) {
         tickets.ticketito.push({
-          folio: rows[i].TI_Folio,
-          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
-          peticion: rows[i].TI_Peticion,
-          fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
-          rate: rows[i].TI_Calificacion,
-          status: rows[i].TI_Status,
-          solicitante: rows[i].TI_Usuario_Solicitante,
-          bibliotecario: rows[i].TI_Usuario_Bibliotecario,
-          biblioteca: rows[i].TI_Biblioteca
+          folio: rows[i].ti_folio,
+          fechaAlta: rows[i].fecha_alta,
+          peticion: rows[i].ti_peticion,
+          init: rows[i].ti_init,
+          fechaCierre: rows[i].fecha_cierre,
+          rate: rows[i].ti_calificacion,
+          status: rows[i].st_status,
+          solicitante: rows[i].usuario_solcitante,
+          bibliotecario: rows[i].usuario_bibliotecario,
+          biblioteca: rows[i].de_dependencia
         });
       }
 
@@ -161,7 +163,7 @@ router.get('/getbylibrarian/:id', function (req, res, next) {
 
     }
     else
-      res.json({ code: 2, msg: 'Bibliotecario sin tickes o Bibliotecario inexistente' });
+      res.json({ code: 2, msg: 'Usuario sin tickets o Usuario inexistente' });
   })
 });
 
