@@ -198,14 +198,12 @@ router.get('/getbylibrary/:dep', function (req, res, next) {
           biblioteca: rows[i].TI_Biblioteca
         });
       }
-
       res.send(tickets);
-
     }
   })
 });
 
-//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ son nuevos 
+//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ son nuevos
 router.get('/getByNew', function (req, res, next) {
   //Regresa todos los datos de los tickets con TI_Status 1 
   ticket.find('all', { where: "TI_Status=1" }, function (err, rows) {
@@ -237,9 +235,14 @@ router.get('/getByNew', function (req, res, next) {
 
 
 //Obtener​ ​todos​ ​los​ ​tickets​ ​que​ estan en proceso
-router.get('/getByDoing', function (req, res, next) {
-  //Regresa todos los datos de los tickets con TI_Status 1 
-  ticket.find('all', { where: "TI_Status=2" }, function (err, rows) {
+router.get('/getByDoing/:idu', function (req, res, next) {
+
+  var idu = req.params.idu;
+
+
+
+  //Regresa todos los datos de los tickets con TI_Status 2 y que no esten ya asignados al bibliotecario que esta consultando
+  ticket.query("SELECT * FROM `tickets` WHERE `TI_Status` = 2 AND `TI_Usuario_Bibliotecario` IS NULL OR `TI_Usuario_Bibliotecario` <> " + idu + ";", function (err, rows) {
     {
       var tickets = {
         ticketito: []
