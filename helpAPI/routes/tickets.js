@@ -136,7 +136,7 @@ router.get('/getByLibrarian/:idl', function (req, res, next) {
   var idl = req.params.idl;
 
   //Regresa todos los datos de todos los tickets que tenga un usuario 
-  ticket.query('select TI_Usuario_Bibliotecario, ti_folio, date_format(ti_fecha_hora_alta, "%M %d, %Y") as fecha_alta, ti_peticion, ti_init, date_format(ti_fecha_hora_cierre, "%M %d, %Y") as fecha_cierre, ti_calificacion, st_status, US1.us_nombre as usuario_solcitante, (select us_nombre from usuarios where us_id = ti_usuario_bibliotecario) as usuario_bibliotecario, de_dependencia from tickets left join status on st_id= ti_status inner join usuarios US1 on US1.us_id = ti_usuario_solicitante left join dependencias on de_id = ti_biblioteca WHERE TI_Usuario_Bibliotecario = ' + idl, function (err, rows) {
+  ticket.query('select TI_Usuario_Bibliotecario, ti_folio, date_format(ti_fecha_hora_alta, "%M %d, %Y") as fecha_alta, ti_peticion, ti_init, date_format(ti_fecha_hora_cierre, "%M %d, %Y") as fecha_cierre, ti_calificacion, ti_status, US1.us_nombre as usuario_solcitante, (select us_nombre from usuarios where us_id = ti_usuario_bibliotecario) as usuario_bibliotecario, de_dependencia from tickets left join status on st_id= ti_status inner join usuarios US1 on US1.us_id = ti_usuario_solicitante left join dependencias on de_id = ti_biblioteca WHERE ti_status <> 3 AND TI_Usuario_Bibliotecario = ' + idl, function (err, rows) {
     //ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, roows) {
 
     if (rows != undefined) {
@@ -152,7 +152,7 @@ router.get('/getByLibrarian/:idl', function (req, res, next) {
           init: rows[i].ti_init,
           fechaCierre: rows[i].fecha_cierre,
           rate: rows[i].ti_calificacion,
-          status: rows[i].st_status,
+          status: rows[i].ti_status,
           solicitante: rows[i].usuario_solcitante,
           bibliotecario: rows[i].usuario_bibliotecario,
           biblioteca: rows[i].de_dependencia
@@ -238,33 +238,36 @@ router.get('/getByNew', function (req, res, next) {
 router.get('/getByDoing/:idu', function (req, res, next) {
 
   var idu = req.params.idu;
-
-
+  console.log(idu)
 
   //Regresa todos los datos de los tickets con TI_Status 2 y que no esten ya asignados al bibliotecario que esta consultando
   ticket.query("SELECT * FROM `tickets` WHERE `TI_Status` = 2 AND `TI_Usuario_Bibliotecario` IS NULL OR `TI_Usuario_Bibliotecario` <> " + idu + ";", function (err, rows) {
     {
-      var tickets = {
-        ticketito: []
-      };
-
-      for (var i = 0; i < rows.length; i++) {
-        tickets.ticketito.push({
-          folio: rows[i].TI_Folio,
-          fechaAlta: rows[i].TI_Fecha_Hora_Alta,
-          peticion: rows[i].TI_Peticion,
-          init: rows[i].TI_Init,
-          fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
-          rate: rows[i].TI_Calificacion,
-          status: rows[i].TI_Status,
-          solicitante: rows[i].TI_Usuario_Solicitante,
-          bibliotecario: rows[i].TI_Usuario_Bibliotecario,
-          biblioteca: rows[i].TI_Biblioteca
-        });
+      if (rows[1].TI_Folio == undefined) {
+        res.send('ID del usuario indefinido');
       }
 
-      res.send(tickets);
+      else {
+        var tickets = {
+          ticketito: []
+        };
 
+        for (var i = 0; i < rows.length; i++) {
+          tickets.ticketito.push({
+            folio: rows[i].TI_Folio,
+            fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+            peticion: rows[i].TI_Peticion,
+            init: rows[i].TI_Init,
+            fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
+            rate: rows[i].TI_Calificacion,
+            status: rows[i].TI_Status,
+            solicitante: rows[i].TI_Usuario_Solicitante,
+            bibliotecario: rows[i].TI_Usuario_Bibliotecario,
+            biblioteca: rows[i].TI_Biblioteca
+          });
+        }
+        res.send(tickets);
+      }
     }
   })
 });
