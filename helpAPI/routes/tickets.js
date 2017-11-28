@@ -470,6 +470,17 @@ router.get('/', function (req, res, next) {
   res.send('Here are the tickets methods')
 });
 
+router.get('/countAll/:fechainicio/:fechatermino', function (req, res, next){
+  var fechainicio = req.params.fechainicio;
+  var fechatermino = req.params.fechatermino;
+  var totaltickets = {datos:[]};
+
+  ticket.query("SELECT COUNT(*) AS total FROM `tickets` WHERE TI_Fecha_Hora_Alta >= '"+fechainicio+"' AND TI_Fecha_Hora_Alta <= '"+fechatermino+"';", function (err, rows){
+    totaltickets.datos.push({total:rows[0].total});
+    res.send(totaltickets);
+  });
+});
+
 
 
 module.exports = router;
