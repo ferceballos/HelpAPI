@@ -243,8 +243,10 @@ router.get('/getByDoing/:idu', function (req, res, next) {
   //Regresa todos los datos de los tickets con TI_Status 2 y que no esten ya asignados al bibliotecario que esta consultando
   ticket.query("SELECT * FROM `tickets` WHERE `TI_Status` = 2 AND `TI_Usuario_Bibliotecario` IS NULL OR `TI_Usuario_Bibliotecario` <> " + idu + ";", function (err, rows) {
     {
-      if (rows[1].TI_Folio == undefined) {
+      
+      if (rows == undefined) {
         res.send('ID del usuario indefinido');
+        console.log('ID del usuario indefinido')
       }
 
       else {
@@ -316,7 +318,7 @@ router.get('/mod/librarian/:idt/:idb', function (req, res, next) {
   ticket.query("UPDATE tickets SET TI_Usuario_Bibliotecario = " + idb + " WHERE TI_Folio='" + idt + "';", function (err, callback) {
 
     if (callback != null)
-      res.json({ code: 1, msg: "Bibliotecario asignado con éxito" });
+      res.json({ code: 1, msg: "La pregunta #" + idt + " ha sido asignada" });
     else
       res.json({ code: 2, msg: "Ha ocurrido un problema al asignar, inténtelo de nuevo" });
 

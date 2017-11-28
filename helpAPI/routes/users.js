@@ -115,7 +115,6 @@ router.get('/getStudents', function (req, res, next) {
 //Obtener todas las dependencias
 router.get('/getDep', function (req, res, next) {
 
-
   user.query("SELECT * FROM `dependencias`", function (err, rows) {
     //No hay dependencias
     if (rows == "") {
@@ -124,7 +123,6 @@ router.get('/getDep', function (req, res, next) {
 
     //Dependencias encontradas
     else {
-
       var dependencias = {
         dependencies: []
       };
