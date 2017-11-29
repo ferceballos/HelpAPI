@@ -111,12 +111,43 @@ router.get('/getStudents', function (req, res, next) {
   });
 });
 
+//Obtener todos los usuarios que sean responsables
+router.get('/getResponsables', function (req, res, next) {
+
+  user.query("SELECT * FROM `usuarios` WHERE us_rol = 2", function (err, rows) {
+    //Correo no registrado
+    if (rows == undefined) {
+      res.json({ code: 2, msg: 'El correo introducido no está registrado' });
+    }
+
+    //Correo registrado
+    else {
+
+      var usuarios = {
+        users: []
+      };
+
+      for (var i = 0; i < rows.length; i++) {
+        usuarios.users.push({
+          id: rows[i].US_ID,
+          name: rows[i].US_Nombre,
+          mail: rows[i].US_Correo,
+          rol: rows[i].US_Rol,
+          dep: rows[i].US_Dependencia,
+        });
+      }
+      res.send(usuarios);
+    }
+  });
+});
+
 
 //Obtener todas las dependencias
 router.get('/getDep', function (req, res, next) {
 
   user.query("SELECT * FROM `dependencias`", function (err, rows) {
-    //No hay dependencias
+
+    //Si 'rows' viene vacío, significa que no hay dependencias en la base de datos
     if (rows == "") {
       res.json({ code: 1, msg: 'Dependencias no encontradas' });
     }
@@ -127,13 +158,16 @@ router.get('/getDep', function (req, res, next) {
         dependencies: []
       };
 
+      //Por cada índice en el vector de 'rows', se guardará el ID y el nombre de las dependencias en formato JSON
       for (var i = 0; i < rows.length; i++) {
         dependencias.dependencies.push({
           id: rows[i].DE_ID,
           nombre: rows[i].DE_Dependencia
         });
       }
-      res.send(dependencias);
+
+      //Finalmente se envía
+      res.json(dependencias);
     }
   });
 });

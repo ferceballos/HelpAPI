@@ -233,8 +233,46 @@ router.get('/getByNew', function (req, res, next) {
   })
 });
 
+//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ estan en proceso (Admin)
+router.get('/getByDoing', function (req, res, next) {
 
-//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ estan en proceso
+
+  //Regresa todos los datos de los tickets con TI_Status 2 y que no esten ya asignados al bibliotecario que esta consultando
+  ticket.query("SELECT * FROM `tickets` WHERE `TI_Status` = 2  ;", function (err, rows) {
+    {
+
+      if (rows == undefined) {
+        res.send('ID del usuario indefinido');
+        console.log('ID del usuario indefinido')
+      }
+
+      else {
+        var tickets = {
+          ticketito: []
+        };
+
+        for (var i = 0; i < rows.length; i++) {
+          tickets.ticketito.push({
+            folio: rows[i].TI_Folio,
+            fechaAlta: rows[i].TI_Fecha_Hora_Alta,
+            peticion: rows[i].TI_Peticion,
+            init: rows[i].TI_Init,
+            fechaCierre: rows[i].TI_Fecha_Hora_Cierre,
+            rate: rows[i].TI_Calificacion,
+            status: rows[i].TI_Status,
+            solicitante: rows[i].TI_Usuario_Solicitante,
+            bibliotecario: rows[i].TI_Usuario_Bibliotecario,
+            biblioteca: rows[i].TI_Biblioteca
+          });
+        }
+        res.send(tickets);
+      }
+    }
+  })
+});
+
+
+//Obtener​ ​todos​ ​los​ ​tickets​ ​que​ estan en proceso y no están asignados ya a un bibliotecario
 router.get('/getByDoing/:idu', function (req, res, next) {
 
   var idu = req.params.idu;
