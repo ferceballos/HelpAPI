@@ -511,14 +511,36 @@ router.get('/', function (req, res, next) {
 router.get('/countAll/:fechainicio/:fechatermino', function (req, res, next){
   var fechainicio = req.params.fechainicio;
   var fechatermino = req.params.fechatermino;
-  var totaltickets = {datos:[]};
+  var totaltickets = {todos:[],nuevos:[],enproceso:[],cerrados:[],estrellas1:[],estrellas2:[],estrellas3:[],estrellas4:[],estrellas5:[]};
 
-  ticket.query("SELECT COUNT(*) AS total FROM `tickets` WHERE TI_Fecha_Hora_Alta >= '"+fechainicio+"' AND TI_Fecha_Hora_Alta <= '"+fechatermino+"';", function (err, rows){
-    totaltickets.datos.push({total:rows[0].total});
-    res.send(totaltickets);
+  ticket.query("SELECT COUNT(*) AS total FROM tickets WHERE TI_Fecha_Hora_Alta >= '"+fechainicio+"' AND TI_Fecha_Hora_Alta <= '"+fechatermino+"';", function (err, rows){
+    totaltickets.todos.push({total:rows[0].total});
+      ticket.query("SELECT COUNT(*) AS nuevos FROM tickets WHERE TI_Status=1", function (err, rows){
+        totaltickets.nuevos.push({total:rows[0].nuevos});
+          ticket.query("SELECT COUNT(*) AS enproceso FROM tickets WHERE TI_Status=2", function (err, rows){
+            totaltickets.enproceso.push({total:rows[0].enproceso});
+              ticket.query("SELECT COUNT(*) AS cerrados FROM tickets WHERE TI_Status=3", function (err, rows){
+                totaltickets.cerrados.push({total:rows[0].cerrados});
+                  ticket.query("SELECT COUNT(*) AS estrellas1 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                    totaltickets.estrellas1.push({total:rows[0].estrellas1});
+                      ticket.query("SELECT COUNT(*) AS estrellas2 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                        totaltickets.estrellas2.push({total:rows[0].estrellas2});
+                          ticket.query("SELECT COUNT(*) AS estrellas3 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                            totaltickets.estrellas3.push({total:rows[0].estrellas3});
+                              ticket.query("SELECT COUNT(*) AS estrellas4 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                                totaltickets.estrellas4.push({total:rows[0].estrellas4});
+                                  ticket.query("SELECT COUNT(*) AS estrellas5 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                                    totaltickets.estrellas5.push({total:rows[0].estrellas5});
+                                    res.send(totaltickets);
+                                  });
+                              });
+                          });
+                      });
+                  });
+              });
+          });  
+      });
   });
 });
-
-
 
 module.exports = router;
