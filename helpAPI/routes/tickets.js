@@ -235,8 +235,6 @@ router.get('/getByNew', function (req, res, next) {
 
 //Obtener​ ​todos​ ​los​ ​tickets​ ​que​ estan en proceso (Admin)
 router.get('/getByDoing', function (req, res, next) {
-
-
   //Regresa todos los datos de los tickets con TI_Status 2 y que no esten ya asignados al bibliotecario que esta consultando
   ticket.query("SELECT * FROM `tickets` WHERE `TI_Status` = 2  ;", function (err, rows) {
     {
@@ -340,10 +338,6 @@ router.get('/getByDone', function (req, res, next) {
 
     }
   })
-});
-
-router.get('/', function (req, res, next) {
-  res.send('Here are the tickets methods')
 });
 
 //Asignar​ ​un​ ​ticket​ ​a​ ​un​ ​bibliotecario
@@ -483,8 +477,6 @@ router.get('/mod/status/:idt/:estado', function (req, res, next) {
   });
 });
 
-
-
 //Calificar un ticket
 router.get('/mod/rate/:idt/:stars', function (req, res, next) {
   //Id Ticket
@@ -504,10 +496,7 @@ router.get('/mod/rate/:idt/:stars', function (req, res, next) {
   });
 });
 
-router.get('/', function (req, res, next) {
-  res.send('Here are the tickets methods')
-});
-
+//Estadistica de tickets en un rango de fecha
 router.get('/countAll/:fechainicio/:fechatermino', function (req, res, next){
   var fechainicio = req.params.fechainicio;
   var fechatermino = req.params.fechatermino;
@@ -523,13 +512,13 @@ router.get('/countAll/:fechainicio/:fechatermino', function (req, res, next){
                 totaltickets.cerrados.push({total:rows[0].cerrados});
                   ticket.query("SELECT COUNT(*) AS estrellas1 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
                     totaltickets.estrellas1.push({total:rows[0].estrellas1});
-                      ticket.query("SELECT COUNT(*) AS estrellas2 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                      ticket.query("SELECT COUNT(*) AS estrellas2 FROM tickets WHERE TI_Calificacion=2", function (err, rows){
                         totaltickets.estrellas2.push({total:rows[0].estrellas2});
-                          ticket.query("SELECT COUNT(*) AS estrellas3 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                          ticket.query("SELECT COUNT(*) AS estrellas3 FROM tickets WHERE TI_Calificacion=3", function (err, rows){
                             totaltickets.estrellas3.push({total:rows[0].estrellas3});
-                              ticket.query("SELECT COUNT(*) AS estrellas4 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                              ticket.query("SELECT COUNT(*) AS estrellas4 FROM tickets WHERE TI_Calificacion=4", function (err, rows){
                                 totaltickets.estrellas4.push({total:rows[0].estrellas4});
-                                  ticket.query("SELECT COUNT(*) AS estrellas5 FROM tickets WHERE TI_Calificacion=1", function (err, rows){
+                                  ticket.query("SELECT COUNT(*) AS estrellas5 FROM tickets WHERE TI_Calificacion=5", function (err, rows){
                                     totaltickets.estrellas5.push({total:rows[0].estrellas5});
                                     res.send(totaltickets);
                                   });
