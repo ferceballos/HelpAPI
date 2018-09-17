@@ -122,7 +122,7 @@ router.get('/getAll', function (req, res, next) {
         });
       }
 
-      res.send(tickets);
+      res.send(tickets.ticketito);
 
     }
     else
